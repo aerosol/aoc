@@ -4,16 +4,8 @@ defmodule AdventOfCode.Day01 do
     |> String.split("\n")
     |> Enum.reduce(0, fn
       x, acc when byte_size(x) > 0 ->
-        {first, last} =
-          case find_ints(x) do
-            [single] ->
-              {single, single}
-
-            [first | rest] ->
-              {first, List.last(rest)}
-          end
-
-        acc + String.to_integer(<<first, last>>)
+        l = find_ints(x)
+        acc + Integer.undigits([List.first(l), List.last(l)])
 
       _, acc ->
         acc
@@ -21,9 +13,7 @@ defmodule AdventOfCode.Day01 do
   end
 
   defp find_ints(s) do
-    for <<x <- s>>, x >= ?0 and x <= ?9 do
-      x
-    end
+    for <<x <- s>>, x in ?0..?9, do: x - 48
   end
 
   def part2(_args) do
