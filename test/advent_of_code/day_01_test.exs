@@ -4,10 +4,16 @@ defmodule AdventOfCode.Day01Test do
   import AdventOfCode.Day01
 
   test "part1" do
-    input = AdventOfCode.Input.get!(1)
+    input = """
+    1abc2
+    pqr3stu8vwx
+    a1b2c3d4e5f
+    treb7uchet
+    """
+
     result = part1(input)
 
-    assert result == 55029
+    assert result == 142
   end
 
   test "part2" do
