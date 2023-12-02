@@ -55,6 +55,32 @@ defmodule AdventOfCode.Day02 do
     |> Enum.sum()
   end
 
+  def part2(input) do
+    input
+    |> parse!()
+    |> Enum.map(&minimal_bag/1)
+    |> Enum.map(&power/1)
+    |> Enum.sum()
+  end
+
+  def power(minimal_bag) do
+    minimal_bag
+    |> Map.values()
+    |> Enum.reduce(1, &(&1 * &2))
+  end
+
+  def minimal_bag([_game_id, cube_sets]) do
+    Enum.reduce(cube_sets, %{"red" => 0, "green" => 0, "blue" => 0}, fn cube_set, acc ->
+      Enum.map(acc, fn {k, v} ->
+        case cube_set[k] do
+          new when is_integer(new) and new > v -> {k, new}
+          _ -> {k, v}
+        end
+      end)
+      |> Enum.into(%{})
+    end)
+  end
+
   def game_possible?([_game_id, cube_sets], bag) do
     any_exceeding? =
       Enum.find(cube_sets, fn cube_set ->
@@ -62,8 +88,5 @@ defmodule AdventOfCode.Day02 do
       end)
 
     !any_exceeding?
-  end
-
-  def part2(_args) do
   end
 end
