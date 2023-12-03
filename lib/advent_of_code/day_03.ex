@@ -52,20 +52,31 @@ defmodule AdventOfCode.Day03 do
   end
 
   def symbol_adjacent?(points, matrix) do
-    Enum.any?(points, fn {x, y} ->
-      candidates =
-        for x2 <- (x - 1)..(x + 1),
-            y2 <- (y - 1)..(y + 1),
-            x2 != x or y2 != y,
-            do: {x2, y2}
+    Enum.any?(points, &(adjacent_values(&1, matrix, target: :symbol, required_count: 1) != []))
+  end
 
-      candidates
-      |> Enum.reduce_while(false, fn point, _acc ->
-        case matrix[point] do
-          [symbol: _symbol] -> {:halt, true}
-          _ -> {:cont, false}
-        end
-      end)
+  defp adjacent_values({x, y}, matrix, opts) do
+    required_count = Keyword.fetch!(opts, :required_count)
+    target = Keyword.fetch!(opts, :target)
+
+    candidates =
+      for x2 <- (x - 1)..(x + 1),
+          y2 <- (y - 1)..(y + 1),
+          x2 != x or y2 != y,
+          do: {x2, y2}
+
+    candidates
+    |> Enum.reduce_while([], fn point, found ->
+      case matrix[point] do
+        [{^target, value}] when length(found) + 1 == required_count ->
+          {:halt, [value | found]}
+
+        [{^target, value}] ->
+          {:halt, [value | found]}
+
+        _ ->
+          {:cont, found}
+      end
     end)
   end
 
