@@ -53,16 +53,13 @@ defmodule AdventOfCode.Day03 do
 
   def symbol_adjacent?(points, matrix) do
     Enum.any?(points, fn {x, y} ->
-      [
-        {x - 1, y},
-        {x, y - 1},
-        {x - 1, y - 1},
-        {x + 1, y},
-        {x, y + 1},
-        {x + 1, y + 1},
-        {x + 1, y - 1},
-        {x - 1, y + 1}
-      ]
+      candidates =
+        for x2 <- (x - 1)..(x + 1),
+            y2 <- (y - 1)..(y + 1),
+            x2 != x or y2 != y,
+            do: {x2, y2}
+
+      candidates
       |> Enum.reduce_while(false, fn point, _acc ->
         case matrix[point] do
           [symbol: _symbol] -> {:halt, true}

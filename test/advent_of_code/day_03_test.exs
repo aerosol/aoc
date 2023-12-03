@@ -69,7 +69,7 @@ defmodule AdventOfCode.Day03Test do
 
     result = part1(input)
 
-    assert result == 3014
+    assert result == 4361
   end
 
   @tag :skip
