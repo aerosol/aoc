@@ -19,7 +19,6 @@ defmodule AdventOfCode.Day03 do
       |> repeat()
 
     def emit(rest, [number], context, {line, pos}, offset, :number = type) do
-      IO.inspect(context)
       int_len = length(Integer.digits(number))
       id = {line, offset - pos - int_len + 1}
 
