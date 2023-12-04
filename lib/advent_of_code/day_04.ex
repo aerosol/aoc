@@ -35,7 +35,6 @@ defmodule AdventOfCode.Day04 do
       |> ignore(optional(ascii_char([?\n])))
       |> wrap()
 
-    defparsec(:card, card)
     defparsec(:cards, repeat(card))
   end
 
@@ -48,7 +47,8 @@ defmodule AdventOfCode.Day04 do
     your_numbers = card[:your_numbers]
     winning_numbers = card[:winning_numbers]
 
-    Enum.reduce(your_numbers, {0, 0}, fn number, {matches, score} ->
+    your_numbers
+    |> Enum.reduce({0, 0}, fn number, {matches, score} ->
       if Enum.member?(winning_numbers, number) do
         matches = matches + 1
         score = if score == 0, do: 1, else: score
@@ -58,17 +58,51 @@ defmodule AdventOfCode.Day04 do
         {matches, score}
       end
     end)
+    |> elem(1)
+  end
+
+  def wins(card) do
+    your = MapSet.new(card[:your_numbers])
+
+    card
+    |> Keyword.fetch!(:winning_numbers)
+    |> MapSet.new()
+    |> MapSet.intersection(your)
+    |> Enum.count()
   end
 
   def part1(input) do
     input
     |> parse()
     |> Enum.reduce(0, fn card, total ->
-      {_matches, score} = card_points(card)
-      total + score
+      card_points(card) + total
     end)
   end
 
-  def part2(_args) do
+  def part2(input) do
+    cards = input |> parse()
+
+    cards
+    |> Enum.map(&{1, wins(&1)})
+    |> collect()
+    |> Enum.sum()
+  end
+
+  defp collect([]), do: []
+
+  defp collect([{copies, wins} | rest]) do
+    acc =
+      copies
+      |> copy(wins, rest)
+      |> collect()
+
+    [copies | acc]
+  end
+
+  defp copy(_, 0, cards), do: cards
+  defp copy(_, _, []), do: []
+
+  defp copy(new, n, [{copies, wins} | rest]) do
+    [{copies + new, wins} | copy(new, n - 1, rest)]
   end
 end
