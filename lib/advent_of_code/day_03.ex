@@ -13,12 +13,13 @@ defmodule AdventOfCode.Day03 do
       |> post_traverse({:emit, [:symbol]})
 
     schematic =
-      repeat(
-        repeat(choice([number, dot, symbol]))
-        |> ignore(ascii_char([?\n]))
-      )
+      choice([number, dot, symbol])
+      |> repeat()
+      |> ignore(ascii_char([?\n]))
+      |> repeat()
 
     def emit(rest, [number], context, {line, pos}, offset, :number = type) do
+      IO.inspect(context)
       int_len = length(Integer.digits(number))
       id = {line, offset - pos - int_len + 1}
 

@@ -8,7 +8,7 @@ defmodule Mix.Tasks.D03.P2 do
     input = AdventOfCode.Input.get!(3)
 
     if Enum.member?(args, "-b"),
-      do: Benchee.run(%{part_2: fn -> input |> part2() end}),
+      do: Benchee.run(%{part_2: fn -> input |> part2() end}, profile_after: true),
       else:
         input
         |> part2()
